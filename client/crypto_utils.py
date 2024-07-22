@@ -1,6 +1,7 @@
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding as sym_padding
 
+
 def encrypt_message(message, session_key):
     cipher = Cipher(algorithms.AES(session_key), modes.ECB())
     encryptor = cipher.encryptor()
@@ -9,6 +10,7 @@ def encrypt_message(message, session_key):
     padded_message = padder.update(message.encode('utf-8')) + padder.finalize()
     encrypted_message = encryptor.update(padded_message) + encryptor.finalize()
     return encrypted_message
+
 
 def decrypt_message(encrypted_message, session_key):
     cipher = Cipher(algorithms.AES(session_key), modes.ECB())

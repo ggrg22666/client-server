@@ -1,13 +1,17 @@
 import socket
 import threading
 import os
+
 from cryptography.hazmat.primitives import serialization
 from key_utils import generate_rsa_keys, get_encrypted_aes_key
 from crypto_utils import encrypt_message, decrypt_message
+from colorama import init, Fore
 
 # Настройки сервера
-host = '192.168.8.140'
+host = 'localhost'
 port = 12345
+
+init(autoreset=True)
 
 # Генерация RSA ключей
 server_private_key, server_public_key = generate_rsa_keys()
@@ -19,16 +23,17 @@ def handle_client(client_sock):
             try:
                 encrypted_message = client_sock.recv(256)
                 if not encrypted_message:
-                    print("\nКлиент отключился")
-                    print("Ожидание нового клиента...")
+                    print(Fore.RED + "\nКлиент отключился")
+                    print(Fore.YELLOW + "Ожидание нового клиента...")
+
                     break
 
                 message = decrypt_message(encrypted_message, session_keys[client_sock])
-                print(f"\nКлиент: {message}")
+                print(Fore.CYAN + f"\nКлиент: {message}")
                 print("Вы:", end='\t')
             except ConnectionError:
-                print("\nКлиент отключился")
-                print("Ожидание нового клиента...")
+                print(Fore.RED + "\nКлиент отключился")
+                print(Fore.YELLOW + "Ожидание нового клиента...")
                 break
         client_sock.close()
 
@@ -39,8 +44,8 @@ def handle_client(client_sock):
                 encrypted_message = encrypt_message(message, session_keys[client_sock])
                 client_sock.sendall(encrypted_message)
             except ConnectionError:
-                print("Не удалось отправить сообщение, клиент отключился")
-                print("Ожидание нового клиента...")
+                print(Fore.RED + "Не удалось отправить сообщение, клиент отключился")
+                print(Fore.YELLOW + "Ожидание нового клиента...")
                 break
             except UnicodeDecodeError:
                 break
@@ -72,14 +77,14 @@ def handle_client(client_sock):
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen(5)
-print(f"Сервер запущен на {host}:{port}")
+print(Fore.GREEN + f"Сервер запущен на {host}:{port}")
 
 session_keys = {}
 
 while True:
     try:
         client_socket, addr = server.accept()
-        print(f"Подключен клиент {addr}")
+        print(Fore.GREEN + f"Подключен клиент {addr}")
 
         # Отправка публичного ключа сервера
         client_socket.sendall(server_public_key.public_bytes(

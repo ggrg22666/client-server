@@ -1,5 +1,6 @@
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives import hashes
+
 
 def generate_rsa_keys():
     private_key = rsa.generate_private_key(
@@ -8,6 +9,7 @@ def generate_rsa_keys():
     )
     public_key = private_key.public_key()
     return private_key, public_key
+
 
 def get_session_key(encrypted_aes_key, private_key):
     session_key = private_key.decrypt(
