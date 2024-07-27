@@ -8,7 +8,7 @@ from crypto_utils import encrypt_message, decrypt_message
 from colorama import init, Fore
 
 # Настройки сервера
-host = 'localhost'
+host = '0.0.0.0'
 port = 12345
 
 init(autoreset=True)
